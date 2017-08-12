@@ -1,0 +1,14 @@
+[package]
+name = "hackernews-rss-reader"
+version = "0.1.0"
+authors = ["Huy <kingbazoka@gmail.com>"]
+
+[dependencies]
+rss = { version = "*", features = ["from_url"] }
+rocket = "0.3.0"
+rocket_codegen = "0.3.0"
+rocket_contrib = { version = "0.3.0", default-features = false, features = ["handlebars_templates"] }
+serde = "1.0.11"
+serde_derive = "1.0.11"
+serde_json = "1.0.2"
+reqwest = "0.7.2"

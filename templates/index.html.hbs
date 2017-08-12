@@ -1,0 +1,105 @@
+<html>
+  <head>
+    <title>Make HackerNews Great Again!</title>
+    <link href="https://fonts.googleapis.com/css?family=PT+Sans" rel="stylesheet"> 
+    <style>
+    html {
+      padding: 0; margin: 0;
+    }
+    body {
+      font-family: 'PT Sans', sans-serif;
+      font-size: 16px;
+      line-height: 22px;
+      display: flex;
+      flex-direction: row;
+      padding: 0; margin: 0;
+    }
+
+    ul {
+      margin: 0; padding: 10px;
+      list-style: none;
+      counter-reset: news-item-counter;
+      flex-basis: 400px;
+      height: 100%;
+      overflow-x: auto;
+    }
+    
+    ul li {
+      padding: 10px 10px 10px 40px;
+      position: relative;
+      cursor: pointer;
+    }
+
+    ul li:before {
+      content: counter(news-item-counter);
+      counter-increment: news-item-counter;
+      position: absolute;
+      top: 10px; left: 10px;
+      font-size: 0.8em;
+      text-align: center;
+      line-height: 24px;
+      width: 24px; height: 24px;
+      background: #27ae60;
+      color: #FFF;
+      font-weight: bold;
+      border-radius: 3px;
+    }
+
+    ul li.active {
+      background: #EEE;
+    }
+
+    ul li a {
+      text-decoration: none;
+      font-weight: bold;
+      color: #27ae60;
+    }
+
+    .metadata {
+      font-size: 0.8em;
+    }
+
+    #frame {
+      flex: 1;
+      border: none;
+      border-left: 1px solid #27ae60;
+    }
+    </style>
+  </head>
+  <script>
+  const loadPage = (url, elem) => {
+    let frame = document.getElementById("frame");
+    let doc = frame.contentDocument || frame.contentWindow.document;
+    doc.open();
+    doc.write("Loading...");
+    doc.close();
+    fetch("/preview", { 
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: url
+      })
+      .then(resp => resp.text())
+      .then(html => {
+        doc.write(html);
+        doc.close();
+      });
+    document.querySelectorAll("ul li").forEach(e => {
+      e.className = "item";
+    });
+    elem.className = "item active";
+  }
+  </script>
+  <body>
+    <ul>
+      {{#each this }}
+      <li class="item" onclick="loadPage('{{ link }}', this)">
+        <div class="title"><a href="{{ link }}">{{ title }}</a></div>
+        <div class="metadata">{{ pub_date }} - {{{ description }}}</div>
+      </li>
+      {{/each}}
+    </ul>
+    <iframe id="frame"></iframe>
+  </body>
+</html>
